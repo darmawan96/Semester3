@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -16,7 +17,7 @@ namespace Tic_Tac_Toe_GUI
         public LinkedListNode<Player> pCur { get; set; }
         public Dictionary<int, Button> btnMap { get; set; }
         private Label sl;
-        private GameForm form;
+        public GameForm form { get; set; }
         public Game(GameStartConfig gs, Label statusLabel, Dictionary<int, Button> MapButton, GameForm fm)
         {
             sl = statusLabel;
@@ -48,7 +49,7 @@ namespace Tic_Tac_Toe_GUI
             WriteTurn();
 
             if (p1 is AI)
-                p1.Move(form);
+                p1.Move(this);
         }
         private bool CheckWin(Player p, out Queue<int> btnIndex)
         {
@@ -119,11 +120,16 @@ namespace Tic_Tac_Toe_GUI
         {
             return btnMap.Count(fx => string.IsNullOrWhiteSpace(fx.Value.Text)) == 0;
         }
+        public void WriteLog(string text)
+        {
+            form.listbox.Items.Add(text);
+        }
         public void NewMovement(int Index)
         {
             btnMap[Index].Text = pCur.Value.ID;
             btnMap[Index].Enabled = false;
-            form.listbox.Items.Add(string.Format("{0} Move to index {1}", pCur.Value.Name, Index));
+
+            WriteLog(string.Format("{0} Move to index {1}", pCur.Value.Name, Index));
 
             Queue<int> btnIndex;
             if (CheckWin(pCur.Value, out btnIndex))
@@ -133,8 +139,10 @@ namespace Tic_Tac_Toe_GUI
                 foreach (var btn in btnMap)
                     btn.Value.Enabled = false;
 
+                var winnerColor = form.Qclr.Last();
+
                 while (btnIndex.Count > 0)
-                    btnMap[btnIndex.Dequeue()].BackColor = System.Drawing.Color.LightBlue;
+                    btnMap[btnIndex.Dequeue()].BackColor = winnerColor;
 
                 return;
             }
@@ -147,7 +155,7 @@ namespace Tic_Tac_Toe_GUI
             {
                 pCur = pCur.Next ?? Players.First;
                 WriteTurn();
-                pCur.Value.Move(form);
+                pCur.Value.Move(this);
             }
         }
         public void Write(string text)

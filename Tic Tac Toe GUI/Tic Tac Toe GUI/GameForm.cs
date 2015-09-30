@@ -40,9 +40,21 @@ namespace Tic_Tac_Toe_GUI
             if (!IsRestarting)
                 fm.Close();
         }
+        Button beforeBtn;
+        Color beforeClr;
+        public Queue<Color> Qclr = new Queue<Color>(new Color[] { Color.LightBlue, Color.Orange });
         public void ProcessInput(object sender)
         {
+            if (beforeBtn != null)
+                beforeBtn.BackColor = beforeClr;
+
             Button btnSender = (Button)sender;
+            beforeBtn = btnSender;
+            beforeClr = btnSender.BackColor;
+
+            btnSender.BackColor = Qclr.Dequeue();
+            Qclr.Enqueue(btnSender.BackColor);
+
             int btnIndex = int.Parse(btnSender.Name.Split('_').Last());
             game.NewMovement(btnIndex);
         }
@@ -100,25 +112,12 @@ namespace Tic_Tac_Toe_GUI
         private void tlog()
         {
             if (log)
-                Size = new Size(630, 443);
+                Size = new Size(737, 445);
             else
                 Size = new Size(353, 443);
         }
-        int previndex = 0;
-        Color prevcolor;
         private void listBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (previndex != 0)
-                MapButton[previndex].BackColor = prevcolor;
-
-            if (listBox1.SelectedItem == null)
-                return;
-
-            int index = int.Parse(listBox1.SelectedItem.ToString().Last().ToString());
-            previndex = index;
-
-            prevcolor = MapButton[index].BackColor;
-            MapButton[index].BackColor = Color.Wheat;
         }
         private void listBox1_MouseHover(object sender, EventArgs e)
         {

@@ -12,13 +12,13 @@ namespace Tic_Tac_Toe_GUI
         public string Name { get; set; }
         public string ID { get; set; }
         public virtual string Type { get { throw new NotImplementedException(); } }
-        public virtual void Move(GameForm form) { throw new NotImplementedException(); }
+        public virtual void Move(Game game) { throw new NotImplementedException(); }
     }
     public class Human : Player
     {
-        public override void Move(GameForm form)
+        public override void Move(Game game)
         {
-            foreach (var btn in form.MapButton)
+            foreach (var btn in game.btnMap)
                 if (string.IsNullOrWhiteSpace(btn.Value.Text))
                     btn.Value.Enabled = true;
         }
@@ -27,9 +27,9 @@ namespace Tic_Tac_Toe_GUI
     {
         public enum Difficulty { Easy, Normal, Hard, Impossible }
         public Difficulty currentDifficulty { get; set; }
-        public override async void Move(GameForm form)
+        public override async void Move(Game game)
         {
-            foreach (var btn in form.MapButton)
+            foreach (var btn in game.btnMap)
                 btn.Value.Enabled = false;
 
             await Task.Delay(new Random().Next(150, 500));
@@ -38,36 +38,42 @@ namespace Tic_Tac_Toe_GUI
             {
                 //Movement Heuristics 100%
                 case Difficulty.Impossible:
-
-                    List<int> CheckMateIndexImpossible = AIAttackAndDefenseLogic(form.game.pCur.Value, form.MapButton).ToList();
+                    game.WriteLog("[AI] Checking for Checkmate possibility.");
+                    List<int> CheckMateIndexImpossible = AIAttackAndDefenseLogic(game.pCur.Value, game.btnMap).ToList();
                     if (CheckMateIndexImpossible.Count > 0)
                     {
-                        form.ProcessInput(form.MapButton[CheckMateIndexImpossible[new Random().Next(0, CheckMateIndexImpossible.Count)]]);
+                        game.WriteLog("[AI] Checkmate movement found! Ignore other heuristics because this is prioritized.");
+                        game.form.ProcessInput(game.btnMap[CheckMateIndexImpossible[new Random().Next(0, CheckMateIndexImpossible.Count)]]);
                         return;
                     }
 
-                    List<int> DefenseIndexImpossible = AIAttackAndDefenseLogic(form.game.pCur.Next != null ? form.game.pCur.Next.Value : form.game.Players.First.Value, form.MapButton).ToList();
+                    game.WriteLog("[AI] Checking for prevent Checkmated possibility.");
+                    List<int> DefenseIndexImpossible = AIAttackAndDefenseLogic(game.pCur.Next != null ? game.pCur.Next.Value : game.Players.First.Value, game.btnMap).ToList();
                     if (DefenseIndexImpossible.Count > 0)
                     {
-                        form.ProcessInput(form.MapButton[DefenseIndexImpossible[new Random().Next(0, DefenseIndexImpossible.Count)]]);
+                        game.WriteLog("[AI] Checkmated movement found! Ignore other heuristics because this is prioritized.");
+                        game.form.ProcessInput(game.btnMap[DefenseIndexImpossible[new Random().Next(0, DefenseIndexImpossible.Count)]]);
                         return;
                     }
 
-                    List<int> MovementHeuristicImpossible = AIMovementLogic(form.game.pCur.Value, form.game.pCur.Next != null ? form.game.pCur.Next.Value : form.game.Players.First.Value, form.MapButton, 1).ToList();
+                    game.WriteLog("[AI] Checking best movement!");
+                    List<int> MovementHeuristicImpossible = AIMovementLogic(game.pCur.Value, game.pCur.Next != null ? game.pCur.Next.Value : game.Players.First.Value, game.btnMap, 1).ToList();
                     if (MovementHeuristicImpossible.Count > 0)
                     {
-                        form.ProcessInput(form.MapButton[MovementHeuristicImpossible[new Random().Next(0, MovementHeuristicImpossible.Count)]]);
+                        game.WriteLog("[AI] Best movement found! " + string.Join(", ", MovementHeuristicImpossible));
+                        game.form.ProcessInput(game.btnMap[MovementHeuristicImpossible[new Random().Next(0, MovementHeuristicImpossible.Count)]]);
                         return;
                     }
 
+                    game.WriteLog("[AI] No priority heuristics. Continued to next functions.");
                     goto case Difficulty.Easy;
 
                 //Checkmate Heuristics 100%
                 case Difficulty.Hard:
-                    List<int> CheckMateIndex = AIAttackAndDefenseLogic(form.game.pCur.Value, form.MapButton).ToList();
+                    List<int> CheckMateIndex = AIAttackAndDefenseLogic(game.pCur.Value, game.btnMap).ToList();
                     if (CheckMateIndex.Count > 0)
                     {
-                        form.ProcessInput(form.MapButton[CheckMateIndex[new Random().Next(0, CheckMateIndex.Count)]]);
+                        game.form.ProcessInput(game.btnMap[CheckMateIndex[new Random().Next(0, CheckMateIndex.Count)]]);
                         return;
                     }
                     else goto case Difficulty.Normal;
@@ -76,18 +82,18 @@ namespace Tic_Tac_Toe_GUI
                 case Difficulty.Normal:
                     if (new Random().Next(0, 10) <= 2 && currentDifficulty == Difficulty.Normal)
                     {
-                        List<int> CheckmateIndex = AIAttackAndDefenseLogic(form.game.pCur.Value, form.MapButton).ToList();
+                        List<int> CheckmateIndex = AIAttackAndDefenseLogic(game.pCur.Value, game.btnMap).ToList();
                         if (CheckmateIndex.Count > 0)
                         {
-                            form.ProcessInput(form.MapButton[CheckmateIndex[new Random().Next(0, CheckmateIndex.Count)]]);
+                            game.form.ProcessInput(game.btnMap[CheckmateIndex[new Random().Next(0, CheckmateIndex.Count)]]);
                             return;
                         }
                     }
 
-                    List<int> DefenseIndex = AIAttackAndDefenseLogic(form.game.pCur.Next != null ? form.game.pCur.Next.Value : form.game.Players.First.Value, form.MapButton).ToList();
+                    List<int> DefenseIndex = AIAttackAndDefenseLogic(game.pCur.Next != null ? game.pCur.Next.Value : game.Players.First.Value, game.btnMap).ToList();
                     if (DefenseIndex.Count > 0)
                     {
-                        form.ProcessInput(form.MapButton[DefenseIndex[new Random().Next(0, DefenseIndex.Count)]]);
+                        game.form.ProcessInput(game.btnMap[DefenseIndex[new Random().Next(0, DefenseIndex.Count)]]);
                         return;
                     }
                     else goto case Difficulty.Easy;
@@ -98,10 +104,10 @@ namespace Tic_Tac_Toe_GUI
                     {
                         int RM;
                         do RM = new Random().Next(1, 10);
-                        while (!string.IsNullOrWhiteSpace(form.MapButton[RM].Text));
+                        while (!string.IsNullOrWhiteSpace(game.btnMap[RM].Text));
                         return RM;
                     });
-                    form.ProcessInput(form.MapButton[RandomMovement]);
+                    game.form.ProcessInput(game.btnMap[RandomMovement]);
                     break;
 
                 default:
@@ -328,8 +334,8 @@ namespace Tic_Tac_Toe_GUI
     public static class RandomName
     {
         private static List<string> Names = new List<string>(new string[] {
-            "Darmawan","Hantze","Cege","Edu","Ricky","Robert","Hans",
-            "Helena","Charisa","Sarah","Prisia","Athalya"
+            "Darmawan","Hantze","Cege","Edu", "Ivan", "Billy","Ricky", "Gunawan","Anton","Robert","Hans",
+            "Helena","Charisa","Sarah","Prisia","Athalya","Naura", "Regina","Reina"
         });
         static RandomName()
         {
