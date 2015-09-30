@@ -16,8 +16,8 @@ namespace Tic_Tac_Toe_GUI
         public LinkedListNode<Player> pCur { get; set; }
         public Dictionary<int, Button> btnMap { get; set; }
         private Label sl;
-        private Form2 form;
-        public Game(GameStartConfig gs, Label statusLabel, Dictionary<int, Button> MapButton, Form2 fm)
+        private GameForm form;
+        public Game(GameStartConfig gs, Label statusLabel, Dictionary<int, Button> MapButton, GameForm fm)
         {
             sl = statusLabel;
             btnMap = MapButton;

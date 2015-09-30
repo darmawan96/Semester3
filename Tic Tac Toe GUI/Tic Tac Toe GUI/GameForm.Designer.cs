@@ -1,6 +1,6 @@
 ﻿namespace Tic_Tac_Toe_GUI
 {
-    partial class Form2
+    partial class GameForm
     {
         /// <summary>
         /// Required designer variable.
@@ -235,7 +235,7 @@
         private System.Windows.Forms.Button button_7;
         private System.Windows.Forms.Button button_8;
         private System.Windows.Forms.Button button_9;
-        private Form1 form1;
+        private StartForm form1;
         private GameStartConfig gameStartConfig;
         private System.Windows.Forms.Label statusLabel;
         private System.Windows.Forms.Button button1;

@@ -10,11 +10,11 @@ using System.Windows.Forms;
 
 namespace Tic_Tac_Toe_GUI
 {
-    public partial class Form1 : Form
+    public partial class StartForm : Form
     {
         GameMode GM;
         AI.Difficulty DIFF;
-        public Form1()
+        public StartForm()
         {
             InitializeComponent();
         }
@@ -49,7 +49,7 @@ namespace Tic_Tac_Toe_GUI
             if (GM == GameMode.AIVSAI)
             {
                 gsc = new GameStartConfig() { GM = GM, Difficulty = DIFF, Log = false };
-                new Form2(this, gsc).Show();
+                new GameForm(this, gsc).Show();
                 this.Hide();
                 return;
             }
@@ -65,7 +65,7 @@ namespace Tic_Tac_Toe_GUI
                     return;
                 }
             gsc = new GameStartConfig() { GM = GM, Player1Name = textBox1.Text, Player2Name = textBox2.Text, Difficulty = DIFF, Log = false };
-            new Form2(this, gsc).Show();
+            new GameForm(this, gsc).Show();
             this.Hide();
         }
 
@@ -74,7 +74,7 @@ namespace Tic_Tac_Toe_GUI
         }
         internal void NewForm2()
         {
-            new Form2(this, gsc).Show();
+            new GameForm(this, gsc).Show();
         }
         private void radioButton3_CheckedChanged(object sender, EventArgs e)
         {

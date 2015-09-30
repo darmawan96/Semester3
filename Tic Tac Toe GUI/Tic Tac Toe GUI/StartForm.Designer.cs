@@ -2,7 +2,7 @@
 
 namespace Tic_Tac_Toe_GUI
 {
-    partial class Form1
+    partial class StartForm
     {
         /// <summary>
         /// Required designer variable.

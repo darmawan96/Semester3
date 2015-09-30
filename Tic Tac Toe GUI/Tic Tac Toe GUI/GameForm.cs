@@ -10,14 +10,14 @@ using System.Windows.Forms;
 
 namespace Tic_Tac_Toe_GUI
 {
-    public partial class Form2 : Form
+    public partial class GameForm : Form
     {
 
-        Form1 fm;
+        StartForm fm;
         public Dictionary<int, Button> MapButton { get; set; }
         public Game game { get; set; }
         public ListBox listbox { get { return listBox1; } }
-        public Form2(Form1 fm1, GameStartConfig gs)
+        public GameForm(StartForm fm1, GameStartConfig gs)
         {
             InitializeComponent();
 

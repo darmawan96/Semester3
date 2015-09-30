@@ -12,11 +12,11 @@ namespace Tic_Tac_Toe_GUI
         public string Name { get; set; }
         public string ID { get; set; }
         public virtual string Type { get { throw new NotImplementedException(); } }
-        public virtual void Move(Form2 form) { throw new NotImplementedException(); }
+        public virtual void Move(GameForm form) { throw new NotImplementedException(); }
     }
     public class Human : Player
     {
-        public override void Move(Form2 form)
+        public override void Move(GameForm form)
         {
             foreach (var btn in form.MapButton)
                 if (string.IsNullOrWhiteSpace(btn.Value.Text))
@@ -27,7 +27,7 @@ namespace Tic_Tac_Toe_GUI
     {
         public enum Difficulty { Easy, Normal, Hard, Impossible }
         public Difficulty currentDifficulty { get; set; }
-        public override async void Move(Form2 form)
+        public override async void Move(GameForm form)
         {
             foreach (var btn in form.MapButton)
                 btn.Value.Enabled = false;
