@@ -22,15 +22,9 @@ namespace Tic_Tac_Toe_GUI
             InitializeComponent();
 
             MapButton = new Dictionary<int, Button>();
-            MapButton.Add(1, button_1);
-            MapButton.Add(2, button_2);
-            MapButton.Add(3, button_3);
-            MapButton.Add(4, button_4);
-            MapButton.Add(5, button_5);
-            MapButton.Add(6, button_6);
-            MapButton.Add(7, button_7);
-            MapButton.Add(8, button_8);
-            MapButton.Add(9, button_9);
+
+            for (int i = 1; i <= 9; i++)
+                MapButton.Add(i, Controls.Find("button_" + i, false).Single() as Button);
 
             game = new Game(gs, statusLabel, MapButton, this);
             fm = fm1;
